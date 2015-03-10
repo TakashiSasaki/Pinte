@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import http.server, http.cookies
-import time
+import time, sys
 
 SERVER_ADDRESS = ""
 SERVER_PORT = 13579
@@ -17,5 +17,5 @@ class MyRequestHandler(http.server.BaseHTTPRequestHandler):
 if __name__ == "__main__":
     http_server = http.server.HTTPServer((SERVER_ADDRESS, SERVER_PORT), MyRequestHandler)
     while True:
+        print("handle_request at " + time.asctime(), file=sys.stderr)
         http_server.handle_request()
-        print(time.asctime())
