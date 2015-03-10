@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import http.server
+import http.server, http.cookies
 
 SERVER_ADDRESS = ""
 SERVER_PORT = 13579
@@ -13,6 +13,10 @@ def main():
 class MyRequestHandler(http.server.BaseHTTPRequestHandler):
   def do_GET(self): 
     self.wfile.write(bytes("Hello.\r\n", "UTF-8"))
+    if "cookie" in self.headers:
+      self.cookie=Cookie.SimpleCookie(self.headers.getheader("cookie"))
+      for x in self.cookie:
+        self.wfile.write(bytes(x + "\r\n", "UTF-8"));
 
 if __name__ == "__main__":
   main()
