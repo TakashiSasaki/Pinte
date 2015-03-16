@@ -7,9 +7,8 @@ import sys
 import logging
 logging.basicConfig(level=logging.INFO)
 
-SERVER_ADDRESS = ""
+SERVER_ADDRESS = "127.1.2.3"
 SERVER_PORT = 13579
-
 
 class MyRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
@@ -17,7 +16,11 @@ class MyRequestHandler(http.server.BaseHTTPRequestHandler):
         logging.getLogger().info(self.headers)
 
         simple_cookie_in_request = http.cookies.SimpleCookie()
-        simple_cookie_in_request.load(self.headers["Cookie"])
+        logging.getLogger().info("self.headers = " + str(self.headers))
+        try:
+            simple_cookie_in_request.load(self.headers["Cookie"])
+        except AttributeError as e:
+            logging.getLogger("no Cookie header in request")
         logging.getLogger().info("simple_cookie_in_request")
         logging.getLogger().info(simple_cookie_in_request)
 
