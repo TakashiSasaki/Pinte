@@ -42,6 +42,7 @@ class MyRequestHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(bytes("Hello at " + time.asctime() + "\r\n", "UTF-8"))
 
 def saveSimpleCookie(simple_cookie):
+    assert isinstance(simple_cookie, http.cookies.SimpleCookie)
     f = open("simple_cookie.txt", "w")
     f.write(simple_cookie.output())
     f.close()
