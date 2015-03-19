@@ -1,5 +1,6 @@
 OAUTH_PARAM_FILE = "../google-oauth-native-application.json"
 SCOPE = ["email", "profile"]
+MAX_RETRY_COUNT = 10
 
 import json
 import urllib.request
@@ -50,7 +51,7 @@ class DeviceFlow(object):
         self.logger.debug("opened web browser")
 
     def getAccessToken(self):
-        while True:
+        for x in range(MAX_RETRY_COUNT):
             self.logger.debug("sleeping %s sec" % self.interval)
             time.sleep(self.interval)
             try:
@@ -58,6 +59,7 @@ class DeviceFlow(object):
             except urllib.error.HTTPError as e:
                 self.logger.debug(e)
                 continue
+            break
 
     def getAccessTokenOnce(self):
         self.logger.debug("getAccessTokenOnce")
@@ -77,8 +79,22 @@ class DeviceFlow(object):
         self.refresh_token = j["refresh_token"]
         self.token_type = j["token_type"]
 
-    def getAccessTokenRepeatedly(self):
-        pass
+    def refresh(self):
+        self.logger.debug("refresh")
+        data = {}
+        data["client_id"] = self.client_id
+        data["client_secret"] = self.client_secret
+        data["refresh_token"] = self.refresh_token
+        data["grant_type"] = "refresh_token"
+        self.logger.debug(data)
+        response = urllib.request.urlopen("https://www.googleapis.com/oauth2/v3/token",
+                                          bytes(urllib.parse.urlencode(data), "UTF-8"))
+        j = json.loads(response.readall().decode("UTF-8"))
+        self.logger.debug(str(j))
+        self.token_type = j["token_type"]
+        self.access_token = j["access_token"]
+        self.id_token = j["id_token"]
+        self.expires_in = j["expires_in"]
 
     def testLog(self):
         self.logger.debug("testLog debug")
@@ -97,3 +113,4 @@ if __name__ == "__main__":
     device_flow.getUserCode(SCOPE)
     device_flow.verifyUserCode()
     device_flow.getAccessToken()
+    device_flow.refresh()
