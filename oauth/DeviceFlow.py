@@ -25,6 +25,7 @@ class DeviceFlow(object):
         self.client_secret = self.oauthParams["installed"]["client_secret"]
 
     def getUserCode(self, scope):
+        self.logger.debug("getUserCode")
         assert isinstance(scope, list)
         data = {}
         data["client_id"] = self.oauthParams["installed"]["client_id"]
@@ -40,9 +41,12 @@ class DeviceFlow(object):
         self.expires_in = j["expires_in"]
 
     def verifyUserCode(self):
-        self.logger.warning("user_code = " + self.user_code)
-        self.logger.warning("verification_url = %s" % self.verification_url)
+        self.logger.debug("verifyUserCode")
+        self.logger.debug("user_code = " + self.user_code)
+        self.logger.debug("verification_url = %s" % self.verification_url)
+        self.logger.debug("invoking web browser")
         webbrowser.open(self.verification_url, autoraise=True)
+        self.logger.debug("opened web browser")
 
     def getAccessToken(self):
         data = {}
@@ -54,7 +58,7 @@ class DeviceFlow(object):
                                           bytes(urllib.parse.urlencode(data), "UTF-8"))
         assert isinstance(response, http.client.HTTPResponse)
         j = json.loads(response.readall().decode("UTF-8"))
-        print(j)
+        self.logger("getAccessToken: %s" % str(j))
 
     def getAccessTokenRepeatedly(self):
         pass
