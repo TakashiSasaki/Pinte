@@ -5,10 +5,15 @@ import json
 import urllib.request
 import urllib.parse
 import http.client
+import webbrowser
+from logging import getLogger, INFO
 
 
 class DeviceFlow(object):
     def __init__(self, oauth_params):
+        self.logger = getLogger(self.__class__.__name__)
+        self.logger.setLevel(INFO)
+
         if isinstance(oauth_params, str):
             f = open(oauth_params)
             self.oauthParams = json.load(f)
@@ -16,6 +21,9 @@ class DeviceFlow(object):
             self.oauthParams = oauth_params
         if "installed" not in self.oauthParams:
             raise RuntimeError("no 'installed' key in given dict")
+
+        self.client_id = self.oauthParams["installed"]["client_id"]
+        self.client_secret = self.oauthParams["installed"]["client_secret"]
 
     def getUserCode(self, scope):
         assert isinstance(scope, list)
@@ -32,7 +40,29 @@ class DeviceFlow(object):
         self.user_code = j["user_code"]
         self.expires_in = j["expires_in"]
 
+    def verifyUserCode(self):
+        print("user_code = " + self.user_code)
+        self.logger.info("verification_url = %s" % self.verification_url)
+        print("verification_url = %s" % self.verification_url)
+        webbrowser.open(self.verification_url, autoraise=True)
+
+    def getAccessToken(self):
+        data = {}
+        data["client_id"] = self.client_id
+        data["client_secret"] = self.client_secret
+        data["code"] = self.device_code
+        data["grant_type"] = "http://oauth.net/grant_type/device/1.0"
+        response = urllib.request.urlopen("https://www.googleapis.com/oauth2/v3/token",
+                                          bytes(urllib.parse.urlencode(data), "UTF-8"))
+        assert isinstance(response, http.client.HTTPResponse)
+        j = json.loads(response.readall().decode("UTF-8"))
+        print(j)
+
+    def getAccessTokenRepeatedly(self):
+        pass
+
 
 if __name__ == "__main__":
     device_flow = DeviceFlow(OAUTH_PARAM_FILE)
     device_flow.getUserCode(SCOPE)
+    device_flow.verifyUserCode()
