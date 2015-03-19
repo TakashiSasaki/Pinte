@@ -32,27 +32,6 @@ class InstalledApplicationFlow(object):
         self.oauthParams = oauth_params
 
 
-class DeviceFlow(object):
-    def __init__(self, oauth_params):
-        assert isinstance(oauth_params, dict)
-        if "installed" not in oauth_params: raise RuntimeError("no 'installed' key in given dict")
-        self.oauthParams = oauth_params
-
-    def getUserCode(self, scope):
-        assert isinstance(scope, list)
-        data = {}
-        data["client_id"] = self.oauthParams["installed"]["client_id"]
-        data["scope"] = " ".join(scope)
-        response = urllib.request.urlopen("https://accounts.google.com/o/oauth2/device/code",
-                                          bytes(urllib.parse.urlencode(data), "UTF-8"))
-        assert isinstance(response, http.client.HTTPResponse)
-        j = json.loads(response.readall().decode("UTF-8"))
-        self.interval = j["interval"]
-        self.verification_url = j["verification_url"]
-        self.device_code = j["device_code"]
-        self.user_code = j["user_code"]
-        self.expires_in = j["expires_in"]
-
 
 if __name__ == "__main__":
     print("GoogleOauth.py")
