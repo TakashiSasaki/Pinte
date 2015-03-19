@@ -6,19 +6,13 @@ import urllib.request
 import urllib.parse
 import http.client
 import webbrowser
-import logging
+from logging import getLogger
 
 
 class DeviceFlow(object):
-    def __init__(self, oauth_params):
-        self.logger = logging.getLogger("DeviceFlow")
-        self.logger.setLevel(logging.INFO)
-        self.logger.debug("__init__ debug")
-        self.logger.info("__init__ info")
-        self.logger.warning("__init__ warning")
-        self.logger.error("__init__ error")
-        self.logger.critical("__init__ critical")
+    logger = getLogger("DeviceFlow")
 
+    def __init__(self, oauth_params):
         if isinstance(oauth_params, str):
             f = open(oauth_params)
             self.oauthParams = json.load(f)
@@ -66,10 +60,17 @@ class DeviceFlow(object):
         pass
 
     def testLog(self):
+        self.logger.debug("testLog debug")
+        self.logger.info("testLog info")
         self.logger.warning("testLog warning")
+        self.logger.error("testLog error")
+        self.logger.critical("testLog critical")
 
 
 if __name__ == "__main__":
+    import logging
+
+    logging.basicConfig(level=logging.DEBUG)
     device_flow = DeviceFlow(OAUTH_PARAM_FILE)
     device_flow.testLog()
     device_flow.getUserCode(SCOPE)
