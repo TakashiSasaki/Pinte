@@ -6,14 +6,13 @@ import urllib.request
 import urllib.parse
 import http.client
 import webbrowser
-from logging import getLogger, INFO
+import logging
 
 
 class DeviceFlow(object):
     def __init__(self, oauth_params):
-        self.logger = getLogger(self.__class__.__name__)
-        self.logger.setLevel(INFO)
-
+        self.logger = logging.getLogger()
+        self.logger.warning("__init__ warning")
         if isinstance(oauth_params, str):
             f = open(oauth_params)
             self.oauthParams = json.load(f)
@@ -41,9 +40,8 @@ class DeviceFlow(object):
         self.expires_in = j["expires_in"]
 
     def verifyUserCode(self):
-        print("user_code = " + self.user_code)
-        self.logger.info("verification_url = %s" % self.verification_url)
-        print("verification_url = %s" % self.verification_url)
+        self.logger.warning("user_code = " + self.user_code)
+        self.logger.warning("verification_url = %s" % self.verification_url)
         webbrowser.open(self.verification_url, autoraise=True)
 
     def getAccessToken(self):
@@ -61,8 +59,12 @@ class DeviceFlow(object):
     def getAccessTokenRepeatedly(self):
         pass
 
+    def testLog(self):
+        self.logger.warning("testLog warning")
+
 
 if __name__ == "__main__":
     device_flow = DeviceFlow(OAUTH_PARAM_FILE)
+    device_flow.testLog()
     device_flow.getUserCode(SCOPE)
     device_flow.verifyUserCode()
