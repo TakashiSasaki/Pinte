@@ -1,0 +1,25 @@
+import logging
+
+logging.debug("root-debug")
+logging.info("root-info")
+logging.warning("root-warn")
+logging.error("root-error")
+logging.critical("root-critical")
+
+a = logging.getLogger()
+a.debug("default-debug")
+a.info("default-info")
+a.warning("default-warn")
+a.error("default-error")
+a.critical("default-critical")
+a.setLevel(logging.DEBUG)
+a.debug("default-debug")
+
+b = logging.getLogger("b")
+b.debug("b-debug")
+b.info("b-info")
+b.warning("b-warn")
+b.error("b-error")
+b.critical("b-critical")
+b.setLevel(logging.DEBUG)
+b.debug("b-debug")
