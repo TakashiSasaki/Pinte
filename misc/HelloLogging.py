@@ -1,11 +1,13 @@
 import logging
 
+
 def logByModuleLevelLogger():
     logging.debug("root-debug")
     logging.info("root-info")
     logging.warning("root-warn")
     logging.error("root-error")
     logging.critical("root-critical")
+
 
 def logByDefaultLogger():
     a = logging.getLogger()
@@ -17,6 +19,7 @@ def logByDefaultLogger():
     a.setLevel(logging.DEBUG)
     a.debug("default-debug")
 
+
 def logByNamedLogger():
     b = logging.getLogger("b")
     b.debug("b-debug")
@@ -27,6 +30,7 @@ def logByNamedLogger():
     b.setLevel(logging.DEBUG)
     b.debug("b-debug")
 
+
 class ClassA(object):
     def __init__(self):
         self.logger = logging.getLogger("ClassA")
@@ -35,6 +39,19 @@ class ClassA(object):
     def methodA(self):
         self.logger.warning("ClassA.methodA")
 
+
+class ClassB(object):
+    logger = logging.getLogger("ClassB")
+
+    def __init__(self):
+        self.logger.warning("ClassB.__init__")
+
+    def methodB(self):
+        self.logger.warning("ClassB.methodB")
+
+
 if __name__ == "__main__":
     class_a = ClassA()
     class_a.methodA()
+    class_b = ClassB()
+    class_b.methodB()
