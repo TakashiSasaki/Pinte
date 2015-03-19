@@ -11,8 +11,14 @@ import logging
 
 class DeviceFlow(object):
     def __init__(self, oauth_params):
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger("DeviceFlow")
+        self.logger.setLevel(logging.INFO)
+        self.logger.debug("__init__ debug")
+        self.logger.info("__init__ info")
         self.logger.warning("__init__ warning")
+        self.logger.error("__init__ error")
+        self.logger.critical("__init__ critical")
+
         if isinstance(oauth_params, str):
             f = open(oauth_params)
             self.oauthParams = json.load(f)
